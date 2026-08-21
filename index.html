@@ -5,17 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LifeWork | Um app para cada parte da sua vida</title>
 <meta name="description" content="LifeWork reúne os melhores apps para organizar sua vida pessoal e profissional: planejamento patrimonial, gestão de metas e simulação de investimentos. Tudo por R$9,90/mês.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💼</text></svg>">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2300D2A8'/%3E%3Cstop offset='1' stop-color='%235B4FE9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='20' y='50' width='15' height='34' rx='7.5' fill='%2300D2A8'/%3E%3Crect x='42.5' y='20' width='15' height='64' rx='7.5' fill='url(%23g)'/%3E%3Crect x='65' y='50' width='15' height='34' rx='7.5' fill='%235B4FE9'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+<!-- ICON SPRITE -->
+<svg aria-hidden="true" style="position:absolute; width:0; height:0; overflow:hidden;">
+  <defs>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21C12 21 4 14.5 4 9.5C4 6.5 6.5 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17.5 4 20 6.5 20 9.5C20 14.5 12 21 12 21Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6"/><circle cx="17.5" cy="8.5" r="2.4"/><path d="M14.8 20c0-2.6 1.4-4.6 3.2-5.1"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><polyline points="2,13 7,13 9,7 13,19 15,13 22,13"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><polygon points="22,2 15,22 11,13 2,9"/><line x1="22" y1="2" x2="11" y2="13"/></symbol>
+    <symbol id="i-landmark" viewBox="0 0 24 24"><polygon points="12,3 3,9 21,9"/><line x1="3" y1="21" x2="21" y2="21"/><line x1="5" y1="9" x2="5" y2="21"/><line x1="9.7" y1="9" x2="9.7" y2="21"/><line x1="14.3" y1="9" x2="14.3" y2="21"/><line x1="19" y1="9" x2="19" y2="21"/></symbol>
+    <symbol id="i-trending" viewBox="0 0 24 24"><polyline points="2,18 9,11 13,15 22,5"/><polyline points="16,5 22,5 22,11"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2.5"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/><line x1="2" y1="13.5" x2="22" y2="13.5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><circle cx="12" cy="12" r="5.6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.4 5 7.8 4 3.8 4v14.3c4 0 6.6 1 8.2 2.5 1.6-1.5 4.2-2.5 8.2-2.5V4c-4 0-6.6 1-8.2 2.5Z"/><line x1="12" y1="6.5" x2="12" y2="20.8"/></symbol>
+    <symbol id="i-network" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2.6"/><circle cx="5.5" cy="18.5" r="2.6"/><circle cx="18.5" cy="18.5" r="2.6"/><line x1="12" y1="8.1" x2="12" y2="12"/><line x1="12" y1="12" x2="6.6" y2="16.4"/><line x1="12" y1="12" x2="17.4" y2="16.4"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="15.5" y1="18.06" x2="17" y2="20.66"/><line x1="8.5" y1="18.06" x2="7" y2="20.66"/><line x1="5" y1="12" x2="2" y2="12"/><line x1="8.5" y1="5.94" x2="7" y2="3.34"/><line x1="15.5" y1="5.94" x2="17" y2="3.34"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 4.5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9.5L4.5 22.5V18.5H4a2 2 0 0 1-2-2v-10a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 3l9 8.5"/><path d="M5.5 10v10a1 1 0 0 0 1 1h4.2v-6.2h2.6V21H17.5a1 1 0 0 0 1-1V10"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l1.8 7.2L21 11l-7.2 1.8L12 20l-1.8-7.2L3 11l7.2-1.8Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="7,12.5 10.5,16 17,8"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></symbol>
+    <symbol id="i-check-sm" viewBox="0 0 24 24"><polyline points="4,12.5 9,17.5 20,6"/></symbol>
+  </defs>
+</svg>
+
 <header class="site-header" id="header">
   <div class="container header-inner">
-    <a href="#" class="logo">Life<span>Work</span></a>
+    <a href="#" class="logo">
+      <svg class="logo-mark" viewBox="0 0 100 100"><defs><linearGradient id="mark-grad-header" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00D2A8"/><stop offset="1" stop-color="#5B4FE9"/></linearGradient></defs><rect x="20" y="50" width="15" height="34" rx="7.5" fill="#00D2A8"/><rect x="42.5" y="20" width="15" height="64" rx="7.5" fill="url(#mark-grad-header)"/><rect x="65" y="50" width="15" height="34" rx="7.5" fill="#5B4FE9"/></svg>
+      Life<span>Work</span>
+    </a>
     <nav class="nav" id="nav">
       <a href="#solucao">Solução</a>
       <a href="#apps">Apps</a>
@@ -35,11 +63,11 @@
   <section class="hero">
     <div class="container hero-inner">
       <div class="hero-copy reveal">
-        <span class="eyebrow">✨ Um app para cada pilar da sua vida</span>
+        <span class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Um app para cada pilar da sua vida</span>
         <h1>Sua vida tem muitos pilares.<br>A LifeWork tem um app <span class="highlight">para cada um deles</span>.</h1>
         <p class="hero-sub">Da agenda da família aos seus próximos passos de carreira, do patrimônio às suas metas — a LifeWork reúne apps feitos para acompanhar você em cada pilar da sua vida pessoal e profissional. Tudo em um só lugar, por menos de R$10 por mês.</p>
         <div class="hero-actions">
-          <a href="#contato" class="btn btn-primary btn-large">Quero acesso agora</a>
+          <a href="#contato" class="btn btn-primary btn-large">Quero acesso agora <svg class="icon"><use href="#i-arrow"/></svg></a>
           <a href="#apps" class="btn btn-ghost btn-large">Ver os apps</a>
         </div>
         <p class="hero-microcopy">Assinatura única · Acesso a todos os apps · Cancele quando quiser</p>
@@ -66,41 +94,55 @@
 
   <!-- PILARES / DOR -->
   <section class="problem">
+    <div class="blob blob-primary blob-1"></div>
+    <div class="blob blob-accent blob-2"></div>
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">O desafio</span>
+        <span class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>O desafio</span>
         <h2>Sua vida pessoal e profissional têm pilares diferentes. Por que tentar administrar todos eles sozinho, sem a ferramenta certa?</h2>
         <p>Cada pilar da sua rotina pede um tipo de cuidado diferente. Organizar tudo em anotações soltas e apps que não conversam entre si é o motivo pelo qual tantos objetivos nunca saem do papel.</p>
       </div>
       <div class="pillars-columns">
         <div class="pillar-col reveal">
-          <span class="pillar-col-icon">🏠</span>
+          <span class="pillar-col-icon"><svg class="icon icon-lg"><use href="#i-home"/></svg></span>
           <h3>Vida pessoal</h3>
           <p class="pillar-col-sub">O dia a dia que sustenta tudo o mais.</p>
           <div class="pillar-tags">
-            <span class="pillar-tag">Agenda pessoal</span>
-            <span class="pillar-tag">Filhos</span>
-            <span class="pillar-tag">Família</span>
-            <span class="pillar-tag">Esportes</span>
-            <span class="pillar-tag">Viagens</span>
-            <span class="pillar-tag">Patrimônio</span>
-            <span class="pillar-tag">Investimentos</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-calendar"/></svg>Agenda pessoal</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-heart"/></svg>Filhos</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-users"/></svg>Família</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-activity"/></svg>Esportes</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-send"/></svg>Viagens</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-landmark"/></svg>Patrimônio</span>
+            <span class="pillar-tag"><svg class="icon icon-sm"><use href="#i-trending"/></svg>Investimentos</span>
           </div>
         </div>
         <div class="pillar-col pillar-col-accent reveal">
-          <span class="pillar-col-icon">💼</span>
+          <span class="pillar-col-icon"><svg class="icon icon-lg"><use href="#i-briefcase"/></svg></span>
           <h3>Vida profissional</h3>
           <p class="pillar-col-sub">O crescimento que constrói o seu futuro.</p>
           <div class="pillar-tags">
-            <span class="pillar-tag pillar-tag-accent">Carreira</span>
-            <span class="pillar-tag pillar-tag-accent">Metas</span>
-            <span class="pillar-tag pillar-tag-accent">Estudos</span>
-            <span class="pillar-tag pillar-tag-accent">Gestão de pessoas</span>
-            <span class="pillar-tag pillar-tag-accent">Hard skills</span>
-            <span class="pillar-tag pillar-tag-accent">Soft skills</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-briefcase"/></svg>Carreira</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-target"/></svg>Metas</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-book"/></svg>Estudos</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-network"/></svg>Gestão de pessoas</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-gear"/></svg>Hard skills</span>
+            <span class="pillar-tag pillar-tag-accent"><svg class="icon icon-sm"><use href="#i-chat"/></svg>Soft skills</span>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto">
+    <div class="blob blob-primary blob-1"></div>
+    <div class="blob blob-accent blob-2"></div>
+    <div class="blob blob-accent blob-3"></div>
+    <div class="container manifesto-inner">
+      <span class="eyebrow eyebrow-light"><svg class="icon icon-sm"><use href="#i-spark"/></svg>O que muda pra você</span>
+      <h2 class="manifesto-statement">Quem usa <span class="brand">LifeWork</span> tem uma vida mais <span class="stress">equilibrada</span> — e mais tempo pra viver.</h2>
+      <p class="manifesto-sub">Menos tempo organizando a vida. Mais tempo vivendo ela.</p>
     </div>
   </section>
 
@@ -108,7 +150,7 @@
   <section class="solution" id="solucao">
     <div class="container solution-inner">
       <div class="solution-copy reveal">
-        <span class="eyebrow eyebrow-light">A solução</span>
+        <span class="eyebrow eyebrow-light"><svg class="icon icon-sm"><use href="#i-spark"/></svg>A solução</span>
         <h2>A LifeWork constrói um app para cada pilar da sua vida — pessoal e profissional.</h2>
         <p>Em vez de um app genérico tentando resolver tudo, construímos um ecossistema: cada app da LifeWork nasce para cuidar de um pilar específico da sua rotina. Você assina uma vez e ganha acesso a todos os apps disponíveis — hoje e conforme novos pilares forem sendo lançados.</p>
       </div>
@@ -117,26 +159,27 @@
 
   <!-- APPS -->
   <section class="apps" id="apps">
+    <div class="blob blob-primary blob-1"></div>
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Nossos apps hoje</span>
+        <span class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Nossos apps hoje</span>
         <h2>Conheça os apps que já fazem parte do seu ecossistema LifeWork.</h2>
       </div>
       <div class="apps-grid">
         <article class="app-card reveal">
-          <div class="app-icon">🏛️</div>
+          <div class="app-icon"><svg class="icon icon-lg"><use href="#i-landmark"/></svg></div>
           <span class="app-pillar-tag">Pilar: Patrimônio</span>
           <h3>Planejamento Patrimonial</h3>
           <p>Organize e visualize todo o seu patrimônio — bens, dívidas e investimentos — em um único painel. Enxergue com clareza para onde seu dinheiro está indo e tome decisões financeiras mais inteligentes.</p>
         </article>
         <article class="app-card reveal">
-          <div class="app-icon">🎯</div>
+          <div class="app-icon"><svg class="icon icon-lg"><use href="#i-target"/></svg></div>
           <span class="app-pillar-tag">Pilares: Metas pessoais e profissionais</span>
           <h3>Gestão de Metas <span class="app-subname">PlanningLife</span></h3>
           <p>Defina, acompanhe e conquiste suas metas — da vida pessoal à carreira. Um sistema de planejamento simples e motivador para transformar objetivos em resultados reais.</p>
         </article>
         <article class="app-card reveal">
-          <div class="app-icon">📊</div>
+          <div class="app-icon"><svg class="icon icon-lg"><use href="#i-trending"/></svg></div>
           <span class="app-pillar-tag">Pilar: Investimentos</span>
           <h3>Simulador de Investimentos</h3>
           <p>Simule cenários, compare rentabilidades e projete o crescimento do seu patrimônio antes de tomar qualquer decisão. Invista com mais segurança e menos achismo.</p>
@@ -150,7 +193,7 @@
   <section class="how">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Como funciona</span>
+        <span class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Como funciona</span>
         <h2>Do interesse ao acesso, em 3 passos simples.</h2>
       </div>
       <div class="how-grid">
@@ -175,9 +218,10 @@
 
   <!-- PREÇO -->
   <section class="pricing" id="preco">
+    <div class="blob blob-accent blob-1"></div>
     <div class="container">
       <div class="pricing-card reveal">
-        <span class="eyebrow eyebrow-light">Assinatura LifeWork</span>
+        <span class="eyebrow eyebrow-light"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Assinatura LifeWork</span>
         <h2>Todos os apps. Um único preço.</h2>
         <div class="price">
           <span class="price-currency">R$</span>
@@ -185,13 +229,13 @@
           <span class="price-period">/mês</span>
         </div>
         <ul class="pricing-list">
-          <li>✔ Acesso ao Planejamento Patrimonial</li>
-          <li>✔ Acesso à Gestão de Metas · PlanningLife</li>
-          <li>✔ Acesso ao Simulador de Investimentos</li>
-          <li>✔ Novos apps incluídos automaticamente</li>
-          <li>✔ Cancele quando quiser, sem burocracia</li>
+          <li><svg class="icon icon-sm"><use href="#i-check-sm"/></svg> Acesso ao Planejamento Patrimonial</li>
+          <li><svg class="icon icon-sm"><use href="#i-check-sm"/></svg> Acesso à Gestão de Metas · PlanningLife</li>
+          <li><svg class="icon icon-sm"><use href="#i-check-sm"/></svg> Acesso ao Simulador de Investimentos</li>
+          <li><svg class="icon icon-sm"><use href="#i-check-sm"/></svg> Novos apps incluídos automaticamente</li>
+          <li><svg class="icon icon-sm"><use href="#i-check-sm"/></svg> Cancele quando quiser, sem burocracia</li>
         </ul>
-        <a href="#contato" class="btn btn-primary btn-large">Quero assinar por R$9,90</a>
+        <a href="#contato" class="btn btn-primary btn-large">Quero assinar por R$9,90 <svg class="icon"><use href="#i-arrow"/></svg></a>
       </div>
     </div>
   </section>
@@ -200,24 +244,24 @@
   <section class="faq" id="faq">
     <div class="container">
       <div class="section-head reveal">
-        <span class="eyebrow">Dúvidas frequentes</span>
+        <span class="eyebrow"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Dúvidas frequentes</span>
         <h2>Tudo o que você precisa saber</h2>
       </div>
       <div class="faq-list reveal">
         <div class="faq-item">
-          <button class="faq-question">A assinatura dá acesso a todos os apps? <span>+</span></button>
+          <button class="faq-question">A assinatura dá acesso a todos os apps? <svg class="icon"><use href="#i-chevron"/></svg></button>
           <div class="faq-answer"><p>Sim! Por R$9,90/mês você tem acesso completo aos três apps da LifeWork — Planejamento Patrimonial, Gestão de Metas (PlanningLife) e Simulador de Investimentos — além de qualquer novo app que lançarmos.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Como faço para assinar? <span>+</span></button>
+          <button class="faq-question">Como faço para assinar? <svg class="icon"><use href="#i-chevron"/></svg></button>
           <div class="faq-answer"><p>Preencha o formulário de contato abaixo. Nossa equipe vai entrar em contato com um link de pagamento seguro e, assim que a compra for confirmada, você recebe o acesso à plataforma.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Posso cancelar quando quiser? <span>+</span></button>
+          <button class="faq-question">Posso cancelar quando quiser? <svg class="icon"><use href="#i-chevron"/></svg></button>
           <div class="faq-answer"><p>Sim, sem burocracia e sem multa. Você mantém o controle total da sua assinatura.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Os apps funcionam no celular e no computador? <span>+</span></button>
+          <button class="faq-question">Os apps funcionam no celular e no computador? <svg class="icon"><use href="#i-chevron"/></svg></button>
           <div class="faq-answer"><p>Sim, a plataforma LifeWork foi pensada para acompanhar você onde estiver, com acesso via navegador em qualquer dispositivo.</p></div>
         </div>
       </div>
@@ -228,7 +272,7 @@
   <section class="contact" id="contato">
     <div class="container contact-inner">
       <div class="section-head reveal">
-        <span class="eyebrow eyebrow-light">Vamos começar</span>
+        <span class="eyebrow eyebrow-light"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Vamos começar</span>
         <h2>Sua vida mais organizada começa com um clique.</h2>
         <p>Deixe seus dados abaixo. Nossa equipe vai te enviar o link de pagamento e, assim que a compra for confirmada, liberamos seu acesso à plataforma com todos os apps.</p>
       </div>
@@ -267,13 +311,13 @@
           <textarea id="message" name="message" rows="3" placeholder="Conte um pouco sobre o que você busca..."></textarea>
         </div>
         <button type="submit" class="btn btn-primary btn-large btn-block" id="submitBtn">
-          Quero receber o link de pagamento
+          Quero receber o link de pagamento <svg class="icon"><use href="#i-arrow"/></svg>
         </button>
         <p class="form-note">Ao enviar, nossa equipe entrará em contato pelo e-mail ou WhatsApp informado com o link de pagamento da assinatura (R$9,90/mês). Seu acesso à plataforma é liberado assim que a compra for confirmada.</p>
       </form>
 
       <div class="form-success" id="formSuccess" hidden>
-        <span class="success-icon">🎉</span>
+        <span class="success-icon"><svg class="icon"><use href="#i-check"/></svg></span>
         <h3>Recebemos seu contato!</h3>
         <p>Em breve nossa equipe vai te enviar o link de pagamento por e-mail ou WhatsApp. Assim que a compra for confirmada, seu acesso à plataforma LifeWork será liberado.</p>
       </div>
@@ -284,7 +328,10 @@
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <a href="#" class="logo">Life<span>Work</span></a>
+    <a href="#" class="logo">
+      <svg class="logo-mark" viewBox="0 0 100 100"><defs><linearGradient id="mark-grad-footer" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00D2A8"/><stop offset="1" stop-color="#5B4FE9"/></linearGradient></defs><rect x="20" y="50" width="15" height="34" rx="7.5" fill="#00D2A8"/><rect x="42.5" y="20" width="15" height="64" rx="7.5" fill="url(#mark-grad-footer)"/><rect x="65" y="50" width="15" height="34" rx="7.5" fill="#5B4FE9"/></svg>
+      Life<span>Work</span>
+    </a>
     <p>&copy; <span id="year"></span> LifeWork. Apps que facilitam sua vida pessoal e profissional.</p>
   </div>
 </footer>
