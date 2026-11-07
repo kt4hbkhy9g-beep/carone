@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>DrinkBox Business Case</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: coluna única — cenários salvos, KPIs, gráficos, um cartão por modelo (unit economics + premissas), score, comparativos, mercado, leitura */
+:root{
+  --bg:#F3EEE6; --surface:#FBF8F3; --ink:#1B1612; --muted:#6E6259; --line:#DDD3C6; --accent:#D2461F;
+  --c-bar:#D2461F; --c-ev:#C98A1B; --c-sale:#2E6E68; --c-fr:#6A4470; --c-brand:#7C8132;
+  --pos:#2E7D4F; --neg:#B3261E; --warn:#A86A00; --chip:#EAE2D6;
+  --f-display:"Anton","Impact","Arial Narrow",sans-serif;
+  --f-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14110F; --surface:#1E1A17; --ink:#F1E9DF; --muted:#A39587; --line:#3A322B; --accent:#F0643A;
+  --c-bar:#F0643A; --c-ev:#E9B04A; --c-sale:#5FB0A6; --c-fr:#B587BC; --c-brand:#B9BD5E;
+  --pos:#6CC28F; --neg:#F2867D; --warn:#E9B04A; --chip:#2A241F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14110F; --surface:#1E1A17; --ink:#F1E9DF; --muted:#A39587; --line:#3A322B; --accent:#F0643A;
+  --c-bar:#F0643A; --c-ev:#E9B04A; --c-sale:#5FB0A6; --c-fr:#B587BC; --c-brand:#B9BD5E;
+  --pos:#6CC28F; --neg:#F2867D; --warn:#E9B04A; --chip:#2A241F; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px;display:flex;flex-direction:column;gap:36px}
+h1,h2{font-family:var(--f-display);font-weight:400;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance;margin:0;line-height:1.02}
+h1{font-size:clamp(34px,8vw,60px)}
+h2{font-size:clamp(22px,4.6vw,30px)}
+p{margin:0;max-width:68ch}
+.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lede{color:var(--muted)}
+header{display:flex;flex-direction:column;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:20px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-right:2px}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{background:transparent;color:var(--ink);border:0;padding:7px 14px;font:600 13px var(--f-body);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tog{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--chip);font-size:13px;font-weight:600;cursor:pointer;user-select:none}
+.tog input{accent-color:var(--accent);margin:0}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.saves{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);padding:12px}
+.saverow{display:flex;gap:8px;flex-wrap:wrap}
+.saverow input{flex:1 1 180px;min-width:0;font:600 15px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.btn{font:700 13px var(--f-body);background:var(--accent);color:#fff;border:0;border-radius:4px;padding:9px 14px;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.savelist{display:flex;flex-wrap:wrap;gap:6px}
+.sv{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg)}
+.sv button{background:transparent;border:0;color:var(--ink);font:600 13px var(--f-body);padding:6px 10px;cursor:pointer}
+.sv button.load[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.sv button.del{color:var(--muted);border-left:1px solid var(--line);padding:6px 9px}
+.sv button.del.arm{color:#fff;background:var(--neg)}
+.status{font-size:12px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.kpi{background:var(--surface);padding:14px 14px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .v{font-family:var(--f-display);font-size:clamp(24px,5vw,34px);line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.kpi .l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+@media (max-width:620px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.chart{background:var(--surface);border:1px solid var(--line);padding:12px 10px 8px}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);padding:2px 4px 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.tbl{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:7px;vertical-align:middle}
+.pos{color:var(--pos)} .neg{color:var(--neg)} .warn{color:var(--warn)}
+.units{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+@media (max-width:680px){.units{grid-template-columns:1fr}}
+.unit{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);display:flex;flex-direction:column;min-width:0}
+.unit.off{opacity:.55}
+.unit .hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:14px 14px 0}
+.unit h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:20px;text-transform:uppercase;letter-spacing:.01em}
+.pill{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.unit .body{display:flex;flex-direction:column;gap:8px;padding:10px 14px 14px}
+.unit dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:0;font-size:13px}
+.unit dt{color:var(--muted)} .unit dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.unit .note{font-size:12.5px;color:var(--ink);border-left:2px solid var(--c);padding-left:9px}
+.unit details{border-top:1px solid var(--line)}
+details.box{background:var(--surface);border:1px solid var(--line)}
+summary{cursor:pointer;padding:12px 14px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-weight:400;color:var(--muted)}
+details[open]>summary::after{content:"–"}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:2px 14px 16px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+.unit .grid{grid-template-columns:1fr 1fr}
+@media (max-width:380px){.unit .grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field label{font-size:12px;color:var(--muted);display:flex;gap:5px;align-items:baseline;flex-wrap:wrap;line-height:1.3}
+.field input{font:600 15px var(--f-body);font-variant-numeric:tabular-nums;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%;box-sizing:border-box}
+.field input.bad{border-color:var(--neg)}
+.tag{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--chip);color:var(--muted)}
+.tag.est{color:var(--accent)} .tag.you{color:var(--pos)}
+.score-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:760px){.score-grid{grid-template-columns:1fr}}
+.bars{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);padding:14px}
+.srow{display:flex;flex-direction:column;gap:5px}
+.srow .t{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.srow .t .pill{margin-left:auto}
+.meter{display:grid;grid-template-columns:72px 1fr 34px;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.meter .track{height:8px;background:var(--chip);border-radius:4px;overflow:hidden}
+.meter .fill{height:100%;border-radius:4px}
+.meter b{color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.callouts{display:flex;flex-direction:column;gap:10px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:4px;overflow-x:auto}
+.tabs button{background:transparent;border:0;border-bottom:3px solid transparent;color:var(--muted);font:700 14px var(--f-body);padding:10px 4px;margin-right:14px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.view{display:flex;flex-direction:column;gap:36px}
+.simctl{display:flex;flex-direction:column;gap:12px}
+.rcards{display:flex;flex-direction:column;gap:22px}
+.rcard{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);padding:18px 16px;display:flex;flex-direction:column;gap:16px}
+.rcard .top{display:flex;flex-direction:column;gap:4px}
+.rcard .num{font-family:var(--f-display);font-size:13px;letter-spacing:.14em;color:var(--c)}
+.rcard h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(22px,5vw,28px);text-transform:uppercase;line-height:1.05}
+.rcard .sub{color:var(--muted);font-size:14px}
+.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px}
+@media (max-width:680px){.rgrid{grid-template-columns:1fr}}
+.rblock{display:flex;flex-direction:column;gap:6px;min-width:0}
+.rblock h4{margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.rblock ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.streams{display:flex;flex-direction:column}
+.stream{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.stream:last-child{border-bottom:0}
+.stream b{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stream span.d{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.ue{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.ue div{background:var(--bg);padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ue .l{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.ue .v{font-family:var(--f-display);font-size:20px;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.ue{grid-template-columns:1fr 1fr}}
+.verdict{border-left:3px solid var(--c);padding:4px 0 4px 12px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.verdict b{font-weight:700}
+.callout{border-left:3px solid var(--accent);padding:2px 0 2px 14px;display:flex;flex-direction:column;gap:3px}
+.small{font-size:12px;color:var(--muted)}
+ol.rec{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;max-width:72ch}
+ol.rec li::marker{font-family:var(--f-display);color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">DrinkBox · Seed 2026 · valores em R$</span>
+    <h1>Business case<br>dos modelos</h1>
+    <p class="lede">Quatro caminhos: locação da Bar em bares, locação da One em eventos, venda de máquina com assinatura e franquia da One. As marcadas como <span class="tag est">est.</span> são estimativas minhas; <span class="tag you">seu</span> são números seus.</p>
+    <nav class="tabs" role="tablist" aria-label="Seções">
+      <button type="button" role="tab" data-tab="simulador" aria-selected="true">Simulador</button>
+      <button type="button" role="tab" data-tab="racional" aria-selected="false">Racional dos modelos</button>
+    </nav>
+  </header>
+
+  <div class="view" id="view-simulador">
+  <div class="simctl">
+    <div class="controls">
+      <span class="lbl">Ponto de partida</span>
+      <div class="seg" role="group" aria-label="Cenário de partida">
+        <button type="button" data-preset="cons">Conservador</button>
+        <button type="button" data-preset="base" aria-pressed="true">Base</button>
+        <button type="button" data-preset="agr">Agressivo</button>
+      </div>
+    </div>
+    <div class="controls" id="toggles"></div>
+    <div class="saves">
+      <div class="saverow">
+        <input id="sv-name" type="text" placeholder="Nome do cenário (ex.: Diageo banca 50%)" maxlength="60" aria-label="Nome do cenário">
+        <button class="btn" id="sv-save" type="button">Salvar cenário</button>
+      </div>
+      <div class="savelist" id="sv-list"></div>
+      <span class="status" id="sv-status">Carregando cenários salvos…</span>
+    </div>
+  </div>
+
+  <section><div class="kpis" id="kpis"></div></section>
+
+  <section>
+    <h2>Receita mensal por modelo</h2>
+    <div class="chart"><div class="legend" id="leg"></div><div id="ch-rev"></div></div>
+  </section>
+
+  <section>
+    <h2>Caixa acumulado</h2>
+    <p class="lede" id="cash-lede"></p>
+    <div class="chart"><div id="ch-cash"></div></div>
+  </section>
+
+  <section>
+    <h2>Máquinas a fabricar</h2>
+    <p class="lede" id="prod-lede"></p>
+    <div class="chart"><div class="legend" id="leg-prod"></div><div id="ch-prod"></div></div>
+    <div class="tbl"><table id="t-prod"></table></div>
+    <p class="small">Conta máquina nova que sai da fábrica: Bar líquida de bares que saíram (a máquina volta e é reinstalada), One por frota, venda no mês da entrega, franquia no mês da adesão. A linha tracejada é a capacidade de fabricação, editável em Premissas gerais. O modelo não trava a demanda na capacidade: ele mostra onde estoura.</p>
+  </section>
+
+  <section>
+    <h2>Modelos e unit economics</h2>
+    <p class="lede">Abra "Premissas" em cada cartão e ajuste: os números do cartão, os gráficos e o score recalculam na hora.</p>
+    <div class="units" id="units"></div>
+  </section>
+
+  <section>
+    <h2>Score de velocidade e escala</h2>
+    <p class="lede">Velocidade = chance de gerar caixa rápido com o que a empresa tem hoje. Escala = chance de virar um negócio grande sem travar em mercado, capital ou operação. Cada score vai de 0 a 100 e é a média ponderada dos critérios abaixo; parte vem da simulação, parte é nota qualitativa que você pode mudar.</p>
+    <div class="score-grid">
+      <div class="chart"><div id="ch-score"></div></div>
+      <div class="bars" id="score-bars"></div>
+    </div>
+    <div class="tbl"><table id="t-score"></table></div>
+    <details class="box">
+      <summary>Notas qualitativas (1 a 5)</summary>
+      <div class="grid" id="qual-inputs"></div>
+    </details>
+    <p class="small">Leitura: 70+ alta probabilidade · 45–69 média · abaixo de 45 baixa. Os limites de cada régua estão na tabela; é um racional pra comparar caminhos, não uma previsão.</p>
+  </section>
+
+  <section>
+    <h2>Comparativo em 5 anos</h2>
+    <p class="lede">Contribuição = receita − impostos − custos variáveis do modelo, antes do custo fixo. Payback = mês em que a contribuição acumulada cobre o capex do próprio modelo.</p>
+    <div class="tbl"><table id="t-models"></table></div>
+  </section>
+
+  <section>
+    <h2>Ano a ano</h2>
+    <div class="tbl"><table id="t-years"></table></div>
+  </section>
+
+  <section>
+    <h2>Valuation</h2>
+    <p class="lede">Valor da empresa no fim de cada ano pelas condições simuladas. O método principal é o que você pediu: 1× a receita do ano. Ao lado, duas checagens pra ver se o 1× está curto ou longo.</p>
+    <div class="kpis" id="val-kpis"></div>
+    <div class="tbl"><table id="t-val"></table></div>
+    <details class="box"><summary>Premissas de valuation</summary><div class="grid" id="inputs-val"></div></details>
+    <p class="small" id="val-note"></p>
+  </section>
+
+  <section>
+    <h2>Premissas gerais</h2>
+    <details class="box" open><summary>Impostos, custo fixo e verba da marca</summary><div class="grid" id="inputs-geral"></div></details>
+  </section>
+
+  <section>
+    <h2>Tamanho de mercado</h2>
+    <p class="lede">Ordem de grandeza pra checar se o volume simulado cabe no mercado. Tudo estimativa; validar com Abrasel, ABF, ABRAPE e dados de on-trade da Diageo antes de levar pra investidor.</p>
+    <div class="tbl"><table id="t-mkt"></table></div>
+  </section>
+
+  <section>
+    <h2>Minha recomendação</h2>
+    <ol class="rec">
+      <li><b>Locação da Bar é o motor, mas não dá pra financiar com equity.</b> Escala só com a Diageo bancando parte do capex ou com leasing/FIDC lastreado no contrato recorrente.</li>
+      <li><b>One como vitrine que gera caixa.</b> Frota de 10–15 máquinas cobrando diária. Paga a conta enquanto a Bar ganha tração.</li>
+      <li><b>Pré-venda pra condomínio, clube e escritório</b> com sinal de 30–50%, como fonte de caixa e validação de demanda.</li>
+      <li><b>Franquia só depois de 12 meses de dado da operação própria</b>, com royalty de 6% + fundo. É o caminho capital-light quando o playbook estiver provado.</li>
+    </ol>
+  </section>
+
+  <p class="small">Simplificações: impostos como % da receita (sem IR/CSLL), máquinas devolvidas por churn são redistribuídas sem novo capex, sem sazonalidade de eventos, custo fixo cresce em degraus por 100 máquinas em campo. Valores nominais em R$, sem inflação.</p>
+  </div>
+
+  <div class="view" id="view-racional" hidden>
+    <section>
+      <h2>Como cada modelo ganha dinheiro</h2>
+      <p class="lede">Os valores desta aba vêm das mesmas premissas do simulador: mudou lá, muda aqui. Abaixo de cada modelo está a minha leitura e o que precisa ser provado antes de colocar dinheiro.</p>
+      <div class="tbl"><table id="t-rac"></table></div>
+    </section>
+    <div class="rcards" id="rac-cards"></div>
+    <section>
+      <h2>Onde os modelos se atropelam</h2>
+      <div class="callouts" id="rac-overlap"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const P=[
+ {g:'geral',k:'cash0',l:'Caixa inicial (seed US$200k × 5)',v:1000000,src:'deck'},
+ {g:'geral',k:'taxSvc',l:'Impostos s/ serviços e royalties (%)',v:14,src:'est'},
+ {g:'geral',k:'taxProd',l:'Impostos s/ venda de máquina (%)',v:22,src:'est'},
+ {g:'geral',k:'fixedBase',l:'Custo fixo base/mês (time, P&D, G&A)',v:150000,src:'est'},
+ {g:'geral',k:'fixedPer100',l:'Custo fixo extra a cada 100 máquinas',v:40000,src:'est'},
+ {g:'geral',k:'brandPerDrink',l:'Ganho de exclusividade por drink (R$, pago pela marca)',v:0,src:'est'},
+ {g:'geral',k:'ticket',l:'Ticket médio do drink no franqueado',v:30,src:'est'},
+ {g:'geral',k:'mediaCost',l:'Custo de venda de mídia (% da receita de mídia)',v:20,src:'est'},
+ {g:'geral',k:'prodCap',l:'Capacidade de fabricação (máquinas/mês)',v:5,src:'est'},
+ {g:'val',k:'valMult',l:'Múltiplo sobre receita total (×)',v:1,src:'you'},
+ {g:'val',k:'valRecMult',l:'Múltiplo da receita recorrente (×)',v:3,src:'est'},
+ {g:'val',k:'valTxMult',l:'Múltiplo da receita transacional (×)',v:1,src:'est'},
+ {g:'val',k:'valEbitdaMult',l:'Múltiplo de EBITDA (×)',v:8,src:'est'},
+ {g:'val',k:'postMoney',l:'Post-money do seed (US$4,2M × 5)',v:21000000,src:'deck'},
+ {g:'val',k:'stake',l:'Sua participação (%)',v:0,src:'you'},
+ {g:'bar',k:'barStart',l:'Começa no mês',v:1,src:'est'},
+ {g:'bar',k:'barAdds0',l:'Máquinas novas no 1º mês',v:3,src:'est'},
+ {g:'bar',k:'barGrowth',l:'Crescimento das instalações (%/mês)',v:8,src:'est'},
+ {g:'bar',k:'barCap',l:'Teto de instalações/mês',v:40,src:'est'},
+ {g:'bar',k:'barCapex',l:'Custo da máquina',v:50000,src:'you'},
+ {g:'bar',k:'barBrandCapex',l:'Capex bancado pela marca (%)',v:0,src:'est'},
+ {g:'bar',k:'barInstall',l:'Instalação (custo único)',v:2000,src:'est'},
+ {g:'bar',k:'barFee',l:'Mensalidade',v:3500,src:'you'},
+ {g:'bar',k:'barDrinks',l:'Drinks por máquina/mês',v:1000,src:'deck'},
+ {g:'bar',k:'barPerDrink',l:'Taxa por drink (R$)',v:1,src:'you'},
+ {g:'bar',k:'barOpex',l:'Manutenção + telemetria/mês',v:450,src:'est'},
+ {g:'bar',k:'barChurn',l:'Churn de bares (%/mês)',v:1.5,src:'est'},
+ {g:'ev',k:'evStart',l:'Começa no mês',v:1,src:'est'},
+ {g:'ev',k:'evAdds0',l:'Máquinas novas por mês',v:1,src:'est'},
+ {g:'ev',k:'evMax',l:'Frota máxima',v:12,src:'est'},
+ {g:'ev',k:'evCapex',l:'Custo da máquina',v:60000,src:'you'},
+ {g:'ev',k:'evDayPrice',l:'Diária',v:10000,src:'you'},
+ {g:'ev',k:'evActivation',l:'Ativação de marca por diária (tela, conteúdo)',v:0,src:'est'},
+ {g:'ev',k:'evDays',l:'Diárias por máquina/mês',v:4,src:'est'},
+ {g:'ev',k:'evDrinksDay',l:'Drinks por diária',v:400,src:'est'},
+ {g:'ev',k:'evPerDrink',l:'Taxa por drink (R$)',v:1,src:'est'},
+ {g:'ev',k:'evCostDay',l:'Custo por diária (frete, operador)',v:3000,src:'est'},
+ {g:'ev',k:'evOpex',l:'Manutenção/mês por máquina',v:600,src:'est'},
+ {g:'sale',k:'saleStart',l:'Abre pré-venda no mês',v:4,src:'est'},
+ {g:'sale',k:'saleAdds0',l:'Pedidos no 1º mês',v:1,src:'est'},
+ {g:'sale',k:'saleGrowth',l:'Crescimento dos pedidos (%/mês)',v:6,src:'est'},
+ {g:'sale',k:'saleCap',l:'Teto de pedidos/mês',v:12,src:'est'},
+ {g:'sale',k:'salePrice',l:'Preço de venda da One',v:100000,src:'you'},
+ {g:'sale',k:'saleCost',l:'Custo de produção da One',v:60000,src:'you'},
+ {g:'sale',k:'saleCac',l:'CAC por máquina (mídia paga + demo)',v:10000,src:'est'},
+ {g:'sale',k:'saleDeposit',l:'Sinal na pré-venda (%)',v:30,src:'est'},
+ {g:'sale',k:'saleLead',l:'Prazo de entrega (meses)',v:4,src:'est'},
+ {g:'sale',k:'salePlan',l:'Plano manutenção + reposição/mês',v:850,src:'you'},
+ {g:'sale',k:'saleAttach',l:'Adesão ao plano (%)',v:70,src:'est'},
+ {g:'sale',k:'salePlanCost',l:'Custo do plano/mês',v:350,src:'est'},
+ {g:'sale',k:'saleMedia',l:'Venda de mídia na tela/mês por máquina',v:500,src:'you'},
+ {g:'sale',k:'saleDrinks',l:'Drinks/mês por máquina vendida',v:150,src:'est'},
+ {g:'sale',k:'saleWarranty',l:'Garantia (% do preço)',v:3,src:'est'},
+ {g:'fr',k:'frStart',l:'Começa no mês',v:10,src:'est'},
+ {g:'fr',k:'frAdds0',l:'Franquias novas no 1º mês',v:1,src:'est'},
+ {g:'fr',k:'frGrowth',l:'Crescimento (%/mês)',v:8,src:'est'},
+ {g:'fr',k:'frCap',l:'Teto de franquias novas/mês',v:10,src:'est'},
+ {g:'fr',k:'frFee',l:'Taxa de franquia',v:40000,src:'you'},
+ {g:'fr',k:'frMachPrice',l:'Preço da One pro franqueado',v:100000,src:'you'},
+ {g:'fr',k:'frMachCost',l:'Custo da One',v:60000,src:'you'},
+ {g:'fr',k:'frPlan',l:'Plano manutenção + reposição/mês',v:1400,src:'you'},
+ {g:'fr',k:'frMedia',l:'Venda de mídia na tela/mês por franquia',v:500,src:'you'},
+ {g:'fr',k:'frMediaShare',l:'Parte da mídia que fica com a DrinkBox (%)',v:70,src:'est'},
+ {g:'fr',k:'frPlanCost',l:'Custo do plano/mês',v:500,src:'est'},
+ {g:'fr',k:'frRoyalty',l:'Royalty (% do faturamento)',v:6,src:'you'},
+ {g:'fr',k:'frRev',l:'Faturamento do franqueado/mês',v:35000,src:'est'},
+ {g:'fr',k:'frMargin',l:'Margem do franqueado antes do royalty (%)',v:30,src:'est'},
+ {g:'fr',k:'frCac',l:'Custo de aquisição por franquia',v:6000,src:'est'},
+ {g:'fr',k:'frSupport',l:'Suporte por franquia/mês',v:800,src:'est'},
+ {g:'fr',k:'frChurn',l:'Churn de franquias (%/mês)',v:1,src:'est'},
+ // notas qualitativas do score (1–5)
+ {g:'qual',k:'qReadyBar',l:'Prontidão · Bar',v:3,src:'est'},
+ {g:'qual',k:'qReadyEv',l:'Prontidão · One',v:5,src:'est'},
+ {g:'qual',k:'qReadySale',l:'Prontidão · Venda',v:2,src:'est'},
+ {g:'qual',k:'qReadyFr',l:'Prontidão · Franquia',v:1,src:'est'},
+ {g:'qual',k:'qOpsBar',l:'Escalabilidade operacional · Bar',v:3,src:'est'},
+ {g:'qual',k:'qOpsEv',l:'Escalabilidade operacional · One',v:1,src:'est'},
+ {g:'qual',k:'qOpsSale',l:'Escalabilidade operacional · Venda',v:3,src:'est'},
+ {g:'qual',k:'qOpsFr',l:'Escalabilidade operacional · Franquia',v:5,src:'est'},
+];
+const DEF=Object.fromEntries(P.map(d=>[d.k,d.v]));
+const MODELS=[
+ {k:'bar',n:'Bar · locação',full:'DrinkBox Bar · locação em bares',c:'--c-bar'},
+ {k:'ev',n:'One · eventos',full:'DrinkBox One · locação para eventos',c:'--c-ev'},
+ {k:'sale',n:'Venda com Assinatura',full:'Modelo de Venda de Máquina com Assinatura',c:'--c-sale'},
+ {k:'fr',n:'Franquia One',full:'DrinkBox One · franquia',c:'--c-fr'},
+ {k:'brand',n:'Exclusividade (marca)',c:'--c-brand'},
+];
+const PLANS=MODELS.filter(x=>x.k!=='brand');
+const PRESETS={
+ base:{},
+ cons:{barAdds0:2,barGrowth:5,barCap:20,barDrinks:600,barChurn:2.5,evDays:2.5,evMax:8,saleGrowth:4,saleCap:8,frAdds0:.5,frGrowth:5,frCap:6,frRev:25000},
+ agr:{barAdds0:5,barGrowth:10,barCap:70,barDrinks:1400,barChurn:1,evDays:6,evMax:15,saleAdds0:2,saleGrowth:8,saleCap:20,frAdds0:2,frGrowth:10,frCap:15,frRev:45000,brandPerDrink:.5,barBrandCapex:30},
+};
+// alvo realista por modelo (estimativa), usado na tabela de mercado e no score
+const MKT={bar:25000,evDiarias:3000,sale:6000,fr:1500};
+let ON={bar:true,ev:true,sale:true,fr:true};
+let p={};
+function applyPreset(name){p=Object.assign({},DEF,PRESETS[name]||{});}
+
+// ===== motor =====
+function simulate(p,on){
+ const N=60,pc=x=>x/100,tS=pc(p.taxSvc),tP=pc(p.taxProd);
+ const S=()=>({rev:[],contrib:[],capex:[],adj:[],rec:[],prod:[]});
+ const m={bar:S(),ev:S(),sale:S(),fr:S(),brand:S()};
+ const T={ebitda:[],cf:[],cash:[],units:[],fixed:[],rev:[]};
+ let barA=0,evA=0,base=0,frA=0,cash=p.cash0;const orders=[];
+ const addsF=(t,st,a0,g,cap)=>t<st?0:Math.min(cap,a0*Math.pow(1+pc(g),t-st));
+ let pr=0;const push=(o,r,c,cx,adj,rec)=>{o.rev.push(r);o.contrib.push(c);o.capex.push(cx);o.adj.push(adj);o.rec.push(rec);o.prod.push(pr);pr=0;};
+ for(let t=1;t<=N;t++){
+  let r=0,c=0,cx=0,adj=0;
+  if(on.bar){const a=addsF(t,p.barStart,p.barAdds0,p.barGrowth,p.barCap);const ch=barA*pc(p.barChurn);barA=barA-ch+a;
+   pr=Math.max(0,a-ch);cx=pr*p.barCapex*(1-pc(p.barBrandCapex));r=barA*(p.barFee+p.barDrinks*p.barPerDrink);
+   c=r*(1-tS)-barA*p.barOpex-a*p.barInstall;}
+  push(m.bar,r,c,cx,0,r);
+  r=0;c=0;cx=0;
+  if(on.ev&&t>=p.evStart){const a=Math.max(0,Math.min(p.evAdds0,p.evMax-evA));evA+=a;pr=a;cx=a*p.evCapex;
+   r=evA*p.evDays*(p.evDayPrice+(p.evActivation||0)+p.evDrinksDay*p.evPerDrink);c=r*(1-tS)-evA*(p.evDays*p.evCostDay+p.evOpex);}
+  push(m.ev,r,c,cx,0,0);
+  r=0;c=0;let rec=0;
+  if(on.sale){const o=addsF(t,p.saleStart,p.saleAdds0,p.saleGrowth,p.saleCap);orders[t]=o;
+   const d=t-p.saleLead>=1?(orders[t-p.saleLead]||0):0;base+=d;pr=d;const plan=base*pc(p.saleAttach);
+   const med=base*(p.saleMedia||0);r=d*p.salePrice+plan*p.salePlan+med;rec=plan*p.salePlan+med;
+   c=d*p.salePrice*(1-tP)+plan*p.salePlan*(1-tS)-d*p.saleCost-d*p.salePrice*pc(p.saleWarranty)-plan*p.salePlanCost-o*(p.saleCac||0)+med*(1-tS-pc(p.mediaCost||0));
+   adj=(o-d)*p.salePrice*pc(p.saleDeposit);}
+  push(m.sale,r,c,0,adj,rec);
+  r=0;c=0;rec=0;
+  if(on.fr){const a=addsF(t,p.frStart,p.frAdds0,p.frGrowth,p.frCap);frA=frA*(1-pc(p.frChurn))+a;pr=a;const roy=frA*pc(p.frRoyalty)*p.frRev,fp=frA*(p.frPlan||0),fm=frA*(p.frMedia||0)*pc(p.frMediaShare||0);
+   r=a*(p.frFee+p.frMachPrice)+roy+fp+fm;rec=roy+fp+fm;
+   c=a*p.frFee*(1-tS)+a*p.frMachPrice*(1-tP)+(roy+fp)*(1-tS)-a*(p.frMachCost+p.frCac)-frA*(p.frSupport+(p.frPlanCost||0))+fm*(1-tS-pc(p.mediaCost||0));}
+  push(m.fr,r,c,0,0,rec);
+  const drinks=barA*p.barDrinks+evA*p.evDays*p.evDrinksDay+base*(p.saleDrinks||0)+frA*p.frRev/Math.max(1,p.ticket);
+  r=drinks*p.brandPerDrink;push(m.brand,r,r*(1-tS),0,0,r);
+  const units=barA+evA+base+frA,fixed=p.fixedBase+p.fixedPer100*units/100;
+  let rv=0,ct=0,cxT=0,ad=0;for(const k in m){rv+=m[k].rev[t-1];ct+=m[k].contrib[t-1];cxT+=m[k].capex[t-1];ad+=m[k].adj[t-1];}
+  const e=ct-fixed,cf=e-cxT+ad;cash+=cf;
+  T.ebitda.push(e);T.cf.push(cf);T.cash.push(cash);T.units.push(units);T.fixed.push(fixed);T.rev.push(rv);
+ }
+ T.end={barA,evA,base,frA};
+ return {m,T};
+}
+const sum=a=>a.reduce((x,y)=>x+y,0);
+function paybackMonth(f){let cum=0,neg=false;for(let i=0;i<f.length;i++){cum+=f[i];if(cum<-1)neg=true;if(neg&&cum>=0)return i+1;}return neg?null:(sum(f)>0?0:null);}
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+
+// unit economics por modelo (puro, usado pelos cartões e pelo score)
+function unitEcon(p){
+ const tS=p.taxSvc/100,tP=p.taxProd/100;
+ const bar={inv:p.barCapex*(1-p.barBrandCapex/100)+p.barInstall,rev:p.barFee+p.barDrinks*p.barPerDrink};
+ bar.mo=bar.rev*(1-tS)-p.barOpex;bar.pb=bar.mo>0?bar.inv/bar.mo:Infinity;bar.ltv=bar.mo/Math.max(.001,p.barChurn/100);
+ const ev={inv:p.evCapex,revD:p.evDayPrice+(p.evActivation||0)+p.evDrinksDay*p.evPerDrink};
+ ev.marD=ev.revD*(1-tS)-p.evCostDay;ev.mo=p.evDays*ev.marD-p.evOpex;ev.pb=ev.mo>0?ev.inv/ev.mo:Infinity;
+ ev.beDays=ev.marD>0?p.evOpex/ev.marD:Infinity;ev.moHalf=p.evDays/2*ev.marD-p.evOpex;ev.pbHalf=ev.moHalf>0?ev.inv/ev.moHalf:Infinity;
+ const sale={mar:p.salePrice*(1-tP)-p.saleCost-p.salePrice*p.saleWarranty/100-(p.saleCac||0)};
+ const mk=1-tS-p.mediaCost/100;sale.media=p.saleMedia*mk;
+ sale.wc=p.saleCost-p.salePrice*p.saleDeposit/100;sale.plan=p.salePlan*(1-tS)-p.salePlanCost;sale.depBE=p.saleCost/p.salePrice*100;
+ const fr={up:p.frFee*(1-tS)+p.frMachPrice*(1-tP)-p.frMachCost-p.frCac,roy:p.frRev*p.frRoyalty/100};
+ fr.media=p.frMedia*p.frMediaShare/100*mk;fr.mo=(fr.roy+p.frPlan)*(1-tS)-p.frSupport-p.frPlanCost+fr.media;fr.zInv=p.frFee+p.frMachPrice;fr.zMo=p.frRev*(p.frMargin-p.frRoyalty)/100-p.frPlan+p.frMedia*(1-p.frMediaShare/100);fr.zPb=fr.zMo>0?fr.zInv/fr.zMo:Infinity;
+ fr.cap=Math.max(0,p.frMachCost+p.frCac-p.frFee-p.frMachPrice);
+ return {bar,ev,sale,fr};
+}
+
+// score de velocidade e escala
+const CRIT={
+ vel:[
+  {k:'first',l:'Mês da 1ª receita',w:.30,rule:'mês 1 = 100 · mês 19+ = 0'},
+  {k:'pb',l:'Payback da unidade',w:.30,rule:'1 mês = 100 · 37+ meses = 0'},
+  {k:'cap',l:'Capital próprio por unidade',w:.20,rule:'R$ 0 = 100 · R$ 60 mil+ = 0'},
+  {k:'ready',l:'Prontidão (nota)',w:.20,rule:'nota 1–5'},
+ ],
+ esc:[
+  {k:'mkt',l:'Espaço de mercado',w:.30,rule:'escala log: 50 mil unidades = 100'},
+  {k:'rev',l:'Receita 5a vs. maior modelo',w:.25,rule:'proporcional ao maior'},
+  {k:'eff',l:'Eficiência de capital',w:.25,rule:'contribuição ÷ capex: 3× = 100'},
+  {k:'ops',l:'Escalabilidade operacional (nota)',w:.20,rule:'nota 1–5'},
+ ]
+};
+function scores(p,sim,ue){
+ const {m}=sim,q=x=>clamp((x-1)/4);
+ const rev5={};PLANS.forEach(x=>rev5[x.k]=sum(m[x.k].rev));const maxRev=Math.max(1,...Object.values(rev5));
+ const first=k=>{const i=m[k].rev.findIndex(v=>v>0);return i<0?null:i+1;};
+ const evTarget=MKT.evDiarias/Math.max(.5,p.evDays*12);
+ const raw={
+  bar:{first:first('bar'),pb:ue.bar.pb,cap:ue.bar.inv,ready:p.qReadyBar,mkt:MKT.bar,ops:p.qOpsBar},
+  ev:{first:first('ev'),pb:ue.ev.pb,cap:ue.ev.inv,ready:p.qReadyEv,mkt:evTarget,ops:p.qOpsEv},
+  sale:{first:first('sale'),pb:Math.max(1,p.saleLead*(ue.sale.wc>0?1:.5)),cap:Math.max(0,ue.sale.wc),ready:p.qReadySale,mkt:MKT.sale,ops:p.qOpsSale},
+  fr:{first:first('fr'),pb:ue.fr.zPb,cap:ue.fr.cap,ready:p.qReadyFr,mkt:MKT.fr,ops:p.qOpsFr},
+ };
+ const out={};
+ PLANS.forEach(x=>{const r=raw[x.k],C=sum(m[x.k].contrib),X=sum(m[x.k].capex);
+  const s={
+   first:r.first==null?0:clamp(1-(r.first-1)/18),
+   pb:isFinite(r.pb)?clamp(1-(r.pb-1)/36):0,
+   cap:clamp(1-r.cap/60000),
+   ready:q(r.ready),
+   mkt:clamp(Math.log10(Math.max(1,r.mkt))/Math.log10(50000)),
+   rev:rev5[x.k]/maxRev,
+   eff:X<=0?(C>0?1:0):clamp(C/X/3),
+   ops:q(r.ops),
+  };
+  const vel=Math.round(100*sum(CRIT.vel.map(c=>c.w*s[c.k]))),esc=Math.round(100*sum(CRIT.esc.map(c=>c.w*s[c.k])));
+  out[x.k]={s,raw:r,vel,esc,C,X};});
+ return out;
+}
+const band=v=>v>=70?['alta','pos']:v>=45?['média','warn']:['baixa','neg'];
+
+// ===== formato =====
+const nf=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1});
+function brl(v,short=true){const s=v<0?'−':'';v=Math.abs(v);
+ if(short&&v>=1e9)return s+'R$ '+nf.format(v/1e9)+' bi';
+ if(short&&v>=1e6)return s+'R$ '+nf.format(v/1e6)+' mi';
+ if(short&&v>=1e4)return s+'R$ '+Math.round(v/1e3).toLocaleString('pt-BR')+' mil';
+ return s+'R$ '+Math.round(v).toLocaleString('pt-BR');}
+const int=v=>Math.round(v).toLocaleString('pt-BR');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mo=v=>v==null?'não paga':(v===0?'imediato':'mês '+v);
+const mths=v=>isFinite(v)?nf.format(v)+' meses':'não paga';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ===== render =====
+function render(){
+ const sim=simulate(p,ON),{m,T}=sim,ue=unitEcon(p),sc=scores(p,sim,ue);
+ const rev5=sum(T.rev.slice(48)),eb5=sum(T.ebitda.slice(48));
+ const minCash=Math.min(...T.cash),need=Math.max(0,-minCash);
+ const cum=[];T.cf.reduce((a,b,i)=>(cum[i]=a+b),0);const burn=Math.max(0,-Math.min(0,...cum));
+ const be=(()=>{for(let i=0;i<60;i++){if(T.ebitda.slice(i).every(x=>x>0))return i+1;}return null;})();
+ const kp=[
+  ['Receita ano 5',brl(rev5),'run-rate mês 60: '+brl(T.rev[59])],
+  ['EBITDA ano 5',brl(eb5),'margem '+(rev5?nf.format(eb5/rev5*100):'0')+'%'],
+  ['Capital a levantar',need?brl(need):'R$ 0',need?'além do caixa inicial':'o seed cobre'],
+  ['Queima máxima',brl(burn),'fundo do caixa acumulado'],
+  ['Breakeven EBITDA',be?'mês '+be:'não atinge','EBITDA positivo daí em diante'],
+  ['Payback total',mo(paybackMonth(T.cf)),int(T.units[59])+' máquinas em campo no mês 60'],
+ ];
+ document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi"><span class="l">${k[0]}</span><span class="v">${k[1]}</span><span class="s">${k[2]}</span></div>`).join('');
+ const active=MODELS.filter(x=>sum(m[x.k].rev)>0);
+ document.getElementById('leg').innerHTML=active.map(x=>`<span><i style="background:var(${x.c})"></i>${x.n}</span>`).join('');
+ drawStack('ch-rev',active.map(x=>({c:css(x.c),v:m[x.k].rev})));
+ drawLine('ch-cash',T.cash);
+ document.getElementById('cash-lede').textContent=need
+  ?`Com essas premissas o caixa fica negativo e precisa de ${brl(need)} além do caixa inicial, no pior ponto no mês ${T.cash.indexOf(minCash)+1}.`
+  :`Com essas premissas o caixa inicial de ${brl(p.cash0)} aguenta a operação sem novo aporte.`;
+
+ renderProd(m);
+ renderUnits(ue,sc);
+ renderScore(sc);
+
+ let rows='';
+ MODELS.forEach(x=>{const o=m[x.k];if(!sum(o.rev))return;
+  const fl=o.contrib.map((v,i)=>v-o.capex[i]+o.adj[i]);const R=sum(o.rev),C=sum(o.contrib),X=sum(o.capex);
+  rows+=`<tr><td><span class="sw" style="background:var(${x.c})"></span>${x.n}</td><td>${brl(R)}</td><td>${brl(C)}</td><td>${R?nf.format(C/R*100)+'%':'–'}</td><td>${brl(X)}</td><td class="${C-X>=0?'pos':'neg'}">${brl(C-X)}</td><td>${mo(paybackMonth(fl))}</td><td>${brl(o.rev[59])}</td></tr>`;});
+ rows+=`<tr><td><b>Custo fixo</b></td><td></td><td class="neg">${brl(-sum(T.fixed))}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+ document.getElementById('t-models').innerHTML=`<thead><tr><th>Modelo</th><th>Receita 5a</th><th>Contribuição</th><th>Margem</th><th>Capex</th><th>Contrib. − capex</th><th>Payback</th><th>Receita mês 60</th></tr></thead><tbody>${rows}</tbody>`;
+
+ let yr='';for(let y=0;y<5;y++){const s=y*12,e=s+12;const R=sum(T.rev.slice(s,e)),E=sum(T.ebitda.slice(s,e));let X=0;for(const k in m)X+=sum(m[k].capex.slice(s,e));
+  yr+=`<tr><td>Ano ${y+1}</td><td>${brl(R)}</td><td class="${E>=0?'pos':'neg'}">${brl(E)}</td><td>${R?nf.format(E/R*100)+'%':'–'}</td><td>${brl(X)}</td><td class="${T.cash[e-1]>=0?'':'neg'}">${brl(T.cash[e-1])}</td><td>${int(T.units[e-1])}</td></tr>`;}
+ document.getElementById('t-years').innerHTML=`<thead><tr><th></th><th>Receita</th><th>EBITDA</th><th>Margem</th><th>Capex</th><th>Caixa fim</th><th>Máquinas</th></tr></thead><tbody>${yr}</tbody>`;
+
+ renderValuation(m,T);
+ renderRacional(ue,m);
+ const E=T.end,evD=E.evA*p.evDays*12;
+ const MK=[
+  ['Bar','~1 mi bares e restaurantes','~50 mil com carta de drinks forte','~25 mil sem contrato exclusivo concorrente',int(E.barA)+' bares',nf.format(E.barA/MKT.bar*100)+'%'],
+  ['One','~12 mil diárias/ano de ativação de bebida','~6 mil em eventos médios/grandes','~3 mil diárias via agências',int(evD)+' diárias/ano',nf.format(evD/MKT.evDiarias*100)+'%'],
+  ['Venda','~450 mil condomínios + ~380 mil milionários PF','~30 mil alto padrão + ~3 mil clubes + ~5 mil sedes + alta renda PF','~6 mil com orçamento pra '+brl(p.salePrice),int(E.base)+' máquinas',nf.format(E.base/MKT.sale*100)+'%'],
+  ['Franquia','bares móveis, buffets, operadores de evento','~15 mil operadores formais','~1.500 com capital pra R$ 130 mil',int(E.frA)+' franquias',nf.format(E.frA/MKT.fr*100)+'%'],
+ ];
+ document.getElementById('t-mkt').innerHTML=`<thead><tr><th>Modelo</th><th>TAM (est.)</th><th>SAM (est.)</th><th>Alvo realista (est.)</th><th>Simulado mês 60</th><th>Penetração</th></tr></thead><tbody>${MK.map(r=>`<tr>${r.map((c,i)=>`<td${i>0&&i<4?' style="white-space:normal;min-width:140px"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
+ saveDraft();
+}
+
+function renderProd(m){
+ const act=PLANS.filter(x=>sum(m[x.k].prod)>0);
+ document.getElementById('leg-prod').innerHTML=act.map(x=>`<span><i style="background:var(${x.c})"></i>${x.n}</span>`).join('')+`<span><i style="background:transparent;border-top:2px dashed var(--ink);height:0;border-radius:0"></i>Capacidade</span>`;
+ drawStack('ch-prod',act.map(x=>({c:css(x.c),v:m[x.k].prod})),{fmt:v=>nf.format(v),cap:p.prodCap,label:'Máquinas fabricadas por mês por caminho'});
+ const tot=Array.from({length:60},(_,i)=>PLANS.reduce((a,x)=>a+m[x.k].prod[i],0));
+ const peak=Math.max(...tot),pm=tot.indexOf(peak)+1,over=tot.findIndex(v=>v>p.prodCap+1e-9),all=sum(tot);
+ const y1=sum(tot.slice(0,12));
+ document.getElementById('prod-lede').textContent=all<.5?'Nenhuma máquina a fabricar com os modelos ligados.':
+  `${int(all)} máquinas em 5 anos, ${int(y1)} no primeiro ano. Pico de ${nf.format(peak)}/mês no mês ${pm}. `+
+  (over<0?`Cabe na capacidade de ${nf.format(p.prodCap)}/mês o tempo todo.`:`Passa da capacidade de ${nf.format(p.prodCap)}/mês a partir do mês ${over+1}: daí em diante o plano só roda se a fábrica crescer.`);
+ const cost={bar:p.barCapex,ev:p.evCapex,sale:p.saleCost,fr:p.frMachCost};
+ let h=`<thead><tr><th></th>${act.map(x=>`<th><span class="sw" style="background:var(${x.c})"></span>${x.n}</th>`).join('')}<th>Total</th><th>Pico/mês</th><th>Custo de fabricação</th></tr></thead><tbody>`;
+ for(let y=0;y<5;y++){const s=y*12,e=s+12;let c=0;const cells=act.map(x=>{const u=sum(m[x.k].prod.slice(s,e));c+=u*cost[x.k];return `<td>${int(u)}</td>`;}).join('');
+  const t=sum(tot.slice(s,e)),pk=Math.max(...tot.slice(s,e));
+  h+=`<tr><td>Ano ${y+1}</td>${cells}<td><b>${int(t)}</b></td><td class="${pk>p.prodCap+1e-9?'neg':''}">${nf.format(pk)}</td><td>${brl(c)}</td></tr>`;}
+ document.getElementById('t-prod').innerHTML=h+'</tbody>';
+}
+function renderValuation(m,T){
+ const Y=[];for(let y=0;y<5;y++){const s=y*12,e=s+12;let R=0,Rr=0;for(const k in m){R+=sum(m[k].rev.slice(s,e));Rr+=sum(m[k].rec.slice(s,e));}
+  const Eb=sum(T.ebitda.slice(s,e));Y.push({R,Rr,Rt:R-Rr,Eb,main:R*p.valMult,blend:Rr*p.valRecMult+(R-Rr)*p.valTxMult,eb:Math.max(0,Eb)*p.valEbitdaMult,cash:T.cash[e-1]});}
+ const y5=Y[4],x=v=>p.postMoney>0?nf.format(v/p.postMoney)+'×':'–';
+ const rr=T.rev[59]*12*p.valMult;
+ const y1=Y[0];
+ const k=[
+  ['Valuation ano 1 · '+nf.format(p.valMult)+'× receita',brl(y1.main),x(y1.main)+' o post-money do seed'],
+  ['Valuation ano 5 · '+nf.format(p.valMult)+'× receita',brl(y5.main),x(y5.main)+' o post-money do seed'],
+  ['Run-rate mês 60',brl(rr),'receita do mês 60 × 12 × '+nf.format(p.valMult)],
+  ['Recorrente no ano 5',nf.format(y5.R?y5.Rr/y5.R*100:0)+'%','da receita: bar, planos, royalty, mídia, exclusividade'],
+ ];
+ if(p.stake>0)k.push(['Sua participação no ano 1',brl(y1.main*p.stake/100),nf.format(p.stake)+'% antes de novas diluições']);
+ if(p.stake>0)k.push(['Sua participação no ano 5',brl(y5.main*p.stake/100),nf.format(p.stake)+'% antes de novas diluições']);
+ k.push(['Checagem · recorrente/transacional',brl(y5.blend),nf.format(p.valRecMult)+'× recorrente + '+nf.format(p.valTxMult)+'× transacional']);
+ k.push(['Checagem · EBITDA',brl(y5.eb),nf.format(p.valEbitdaMult)+'× EBITDA do ano 5']);
+ document.getElementById('val-kpis').innerHTML=k.map(a=>`<div class="kpi"><span class="l">${a[0]}</span><span class="v">${a[1]}</span><span class="s">${a[2]}</span></div>`).join('');
+ document.getElementById('t-val').innerHTML=`<thead><tr><th></th><th>Receita</th><th>Recorrente</th><th>${nf.format(p.valMult)}× receita</th><th>vs. post-money</th><th>Rec./trans.</th><th>${nf.format(p.valEbitdaMult)}× EBITDA</th>${p.stake>0?'<th>Sua parte</th>':''}</tr></thead><tbody>${Y.map((v,i)=>`<tr><td>Ano ${i+1}</td><td>${brl(v.R)}</td><td>${brl(v.Rr)}</td><td><b>${brl(v.main)}</b></td><td class="${v.main>=p.postMoney?'pos':'neg'}">${x(v.main)}</td><td>${brl(v.blend)}</td><td>${v.Eb>0?brl(v.eb):'EBITDA negativo'}</td>${p.stake>0?`<td>${brl(v.main*p.stake/100)}</td>`:''}</tr>`).join('')}</tbody>`;
+ const lo=Math.min(y5.main,y5.blend,y5.eb),hi=Math.max(y5.main,y5.blend,y5.eb);
+ const need=Math.max(0,-Math.min(...T.cash));
+ document.getElementById('val-note').textContent=
+  (y5.main<y5.blend?`O 1× receita está conservador pra esse mix: ${nf.format(y5.R?y5.Rr/y5.R*100:0)}% da receita é recorrente, e recorrente costuma valer 3–6×. `:`O 1× receita está generoso pra esse mix: boa parte da receita é venda de máquina e diária, que o mercado precifica perto de 1× ou abaixo. `)
+  +`Faixa das três leituras no ano 5: ${brl(lo)} a ${brl(hi)}. `
+  +(need>0?`Atenção: a simulação pede ${brl(need)} de capital novo, e esse aporte dilui a sua participação antes de chegar no ano 5.`:'A simulação não pede capital novo, então não há diluição além das rodadas já previstas.');
+}
+
+function renderRacional(ue,m){
+ const tS=p.taxSvc/100,tP=p.taxProd/100,X=p.brandPerDrink;
+ const excl=(drinks,per)=>X>0?brl(drinks*X,false)+per:'a negociar';
+ const exD=X>0?`Hoje no simulador: R$ ${nf.format(X)} por drink.`:'Hoje zerado no simulador: preencha "Ganho de exclusividade por drink" em Premissas gerais quando tiver o número da Diageo.';
+ const frDr=p.frRev/Math.max(1,p.ticket);
+ const R={
+  bar:{sub:'Máquina operador-assist alugada pro bar, com fornecedor exclusivo.',payer:'Bar paga a mensalidade e o fee; a marca paga a exclusividade e a ativação',
+   streams:[['Aluguel da máquina',brl(p.barFee,false)+'/mês','Contrato recorrente com o bar.','you'],
+    ['Fee por drink',brl(p.barPerDrink*p.barDrinks,false)+'/mês',`R$ ${nf.format(p.barPerDrink)} × ${int(p.barDrinks)} drinks medidos por telemetria.`,'you'],
+    ['Exclusividade do fornecedor',excl(p.barDrinks,'/mês'),'A marca paga pra ser a única pour na máquina. '+exD,'est'],
+    ['Ativações no ponto',p.barBrandCapex>0?`${nf.format(p.barBrandCapex)}% do capex pela marca`:'a negociar','Push de receita, promoção ao vivo, cardápio patrocinado. Pode virar subsídio de capex.','est']],
+   ue:[['Capital/máquina',brl(ue.bar.inv)],['Resultado/mês',brl(ue.bar.mo)],['Payback',mths(ue.bar.pb)]],
+   sales:'Trade team da Diageo indica e ajuda a fechar os bares; DrinkBox instala e opera.',
+   deps:['Acordo com a Diageo com meta de bares por ano','Bar finalizada e homologada (deck: ainda em finalização)','Time de instalação e manutenção de campo'],
+   read:[`Pra um bar, ${brl(p.barFee+p.barPerDrink*p.barDrinks,false)}/mês só fecha se a máquina substituir ~1 bartender (R$ 5–6 mil/mês com encargos, est.) ou vender mais drink. Esse é o pitch, não a tecnologia.`,
+    'Depender da Diageo pra vender concentra poder de negociação nela. O contrato precisa de compromisso mínimo de bares e de quem paga o capex, senão ela usa a DrinkBox como piloto barato.',
+    `É o modelo que mais consome capital e fábrica: ${brl(ue.bar.inv)} parados por ${mths(ue.bar.pb)} em cada bar.`],
+   prove:['Drinks por máquina/mês em 5 bares piloto','Churn e motivo de saída','Quanto a Diageo paga por bar (capex ou por drink)']},
+  ev:{sub:'Máquina autônoma alugada por diária pra eventos e ativações.',payer:'Produtora do evento ou a marca, pela verba de ativação',
+   streams:[['Aluguel por diária',brl(p.evDayPrice,false)+'/diária','Cobrado por evento.','you'],
+    ['Ativação da marca',p.evActivation>0?brl(p.evActivation,false)+'/diária':'a definir','Tela de 43", photo booth, games, captura de lead. Vendido como pacote de mídia.','est'],
+    ['Exclusividade',excl(p.evDrinksDay,'/diária'),`Marca única na máquina durante o evento (${int(p.evDrinksDay)} drinks/diária). `+exD,'est'],
+    ['Fee por drink',p.evPerDrink>0?brl(p.evPerDrink*p.evDrinksDay,false)+'/diária':'–','Opcional; no evento costuma entrar no preço da diária.','est']],
+   ue:[['Capital/máquina',brl(ue.ev.inv)],['Resultado/mês',brl(ue.ev.mo)],['Payback',mths(ue.ev.pb)]],
+   sales:'Hunter/outbound com produtoras e agências, ou parceria com a Diageo pra estar em todo evento que ela patrocina.',
+   deps:['One pronta (deck: concluída)','Logística de transporte e montagem','Calendário de eventos da Diageo'],
+   read:['O risco é utilização, não margem. Com metade das diárias o payback vai de '+mths(ue.ev.pb)+' pra '+mths(ue.ev.pbHalf)+'.',
+    'Evento já tem patrocinador de bebida. A One só entra onde a Diageo é a patrocinadora, ou onde ninguém tem exclusividade. Isso define o mercado endereçável.',
+    'A parceria com a Diageo é o canal mais eficiente: um contrato cobre dezenas de diárias. O outbound evento a evento é caro e sazonal.'],
+   prove:['Diárias por máquina/mês por 3 meses','Custo real de logística por diária','Quantas diárias/ano a Diageo compromete']},
+  sale:{sub:'Venda da One pra uso próprio (casa, condomínio, clube, escritório), com plano mensal.',payer:'Pessoa física ou condomínio/empresa compra; o plano é assinatura mensal',
+   streams:[['Venda da máquina',brl(p.salePrice,false),`Sinal de ${nf.format(p.saleDeposit)}% na pré-venda, saldo na entrega.`,'you'],
+    ['Plano manutenção + reposição',brl(p.salePlan,false)+'/mês',`Adesão estimada de ${nf.format(p.saleAttach)}%.`,'you'],
+    ['Venda de mídia na tela',p.saleMedia>0?brl(p.saleMedia,false)+'/mês':'–','Anúncio de marca no 43" e no app, vendido em rede pela DrinkBox.','est'],
+    ['Exclusividade',excl(p.saleDrinks,'/mês por máquina'),`Só compra insumo de fornecedor homologado (~${int(p.saleDrinks)} drinks/mês, est.). `+exD,'est']],
+   ue:[['Margem na venda',brl(ue.sale.mar)],['Plano líquido/mês',brl(ue.sale.plan)],['Capital/unid.',ue.sale.wc>0?brl(ue.sale.wc):'R$ 0']],
+   sales:'Mídia paga digital e conversão inbound.',
+   deps:['Linha de produção com prazo previsível','Rede de assistência técnica nas cidades onde vende','Showroom ou demo (eventos da One servem de vitrine)'],
+   read:[`A conta fica apertada: ${brl(p.salePrice,false)} menos ${nf.format(p.taxProd)}% de imposto, ${brl(p.saleCost,false)} de custo, garantia e ${brl(p.saleCac,false)} de CAC sobram ${brl(ue.sale.mar,false)} por máquina. Ou o preço sobe, ou o custo cai (é aí que o projeto da linha de montagem se paga).`,
+        'Ticket de R$ 100 mil raramente fecha só no digital. A mídia paga gera lead; quem converte é demo, visita e indicação. Conte com venda consultiva.',
+    'Amarrar fornecedor homologado pra pessoa física é difícil de fiscalizar e vira objeção na venda. Funciona melhor como benefício: o plano já entrega o kit de insumos da Diageo.'],
+   prove:['Quantas pré-vendas com sinal em 60 dias de mídia','CAC real por máquina vendida','Uso real em casa (drinks/mês)']},
+  fr:{sub:'Franqueado compra a One e opera eventos e pontos na sua região com a marca DrinkBox.',payer:'Franqueado paga entrada, máquina, plano e royalty',
+   streams:[['Taxa de franquia',brl(p.frFee,false),'Uma vez, na adesão.','you'],
+    ['Venda da máquina',brl(p.frMachPrice,false),'Uma vez, na adesão.','you'],
+    ['Plano manutenção + reposição',brl(p.frPlan,false)+'/mês','Recorrente.','you'],
+    ['Royalty',brl(p.frRev*p.frRoyalty/100,false)+'/mês',`${nf.format(p.frRoyalty)}% sobre ${brl(p.frRev,false)} de faturamento estimado.`,'you'],
+    ['Venda de mídia na tela',p.frMedia>0?brl(p.frMedia*p.frMediaShare/100,false)+'/mês':'–',`${brl(p.frMedia,false)}/mês de mídia vendida em rede pela DrinkBox; ${nf.format(p.frMediaShare)}% fica com a DrinkBox, o resto com o franqueado.`,'est'],
+    ['Exclusividade',excl(frDr,'/mês por franquia'),'Só fornecedores homologados (permitido pela Lei 13.966/19). '+exD,'est']],
+   ue:[['Margem na entrada',brl(ue.fr.up)],['Recorrente líq./mês',brl(ue.fr.mo)],['Payback franqueado',mths(ue.fr.zPb)]],
+   sales:'Mídia paga digital e orgânica, conversão inbound.',
+   deps:['COF e contrato de franquia','Playbook de operação provado em unidade própria','Definição de território'],
+   read:[`O franqueado investe ${brl(ue.fr.zInv,false)} e paga ${brl(p.frRev*p.frRoyalty/100+p.frPlan,false)}/mês entre royalty e plano. Sobra ${brl(ue.fr.zMo,false)}/mês pra ele, payback de ${mths(ue.fr.zPb)}. ${ue.fr.zPb>30?'Difícil de vender.':ue.fr.zPb>18?'Vendável com esforço.':'Fácil de vender.'}`,
+    'Franquia de equipamento único é frágil: se a máquina parar, o negócio do franqueado para. O plano de manutenção precisa de SLA forte.',
+    'Mídia é onde a franquia vira rede: o anunciante compra a audiência de todas as unidades de uma vez, e só a DrinkBox consegue vender isso. Divida a receita com o franqueado pra ele manter a tela ligada e o conteúdo rodando.',
+    'Sem 12 meses de dado da operação própria de eventos não há o que vender ao franqueado nem o que colocar na COF.'],
+   prove:['Faturamento de uma unidade própria por 12 meses','Margem real do operador','Leads qualificados por mês na mídia']},
+ };
+ const keys=['bar','ev','sale','fr'];
+ const rows=[
+  ['Produto',k=>({bar:'Bar',ev:'One',sale:'One',fr:'One'}[k])],
+  ['Quem paga',k=>R[k].payer],
+  ['Receita principal',k=>R[k].streams[0][0]+' · '+R[k].streams[0][1]],
+  ['Recorrência',k=>({bar:'Mensal',ev:'Por evento',sale:'Uma vez + plano mensal',fr:'Entrada + royalty e plano mensais'}[k])],
+  ['Canal de venda',k=>R[k].sales],
+  ['Ciclo de venda (est.)',k=>({bar:'30–60 dias',ev:'15–90 dias por evento',sale:'30–90 dias',fr:'60–120 dias'}[k])],
+  ['Depende da Diageo',k=>({bar:'Muito',ev:'Médio',sale:'Pouco',fr:'Pouco'}[k])],
+  ['Capital por unidade',k=>R[k].ue[k==='sale'?2:0][1]],
+ ];
+ document.getElementById('t-rac').innerHTML=`<thead><tr><th></th>${keys.map(k=>{const x=PLANS.find(y=>y.k===k);return `<th><span class="sw" style="background:var(${x.c})"></span>${x.n}</th>`;}).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r[0]}</b></td>${keys.map(k=>`<td style="text-align:left;white-space:normal;min-width:150px">${r[1](k)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+ const tag=t=>t==='you'?'<span class="tag you">seu</span>':'<span class="tag est">est.</span>';
+ document.getElementById('rac-cards').innerHTML=keys.map((k,i)=>{const x=PLANS.find(y=>y.k===k),r=R[k];
+  return `<article class="rcard" style="--c:var(${x.c})">
+   <div class="top"><span class="num">MODELO ${i+1}</span><h3>${x.full}</h3><span class="sub">${r.sub}</span></div>
+   <div class="ue">${r.ue.map(u=>`<div><span class="l">${u[0]}</span><span class="v">${u[1]}</span></div>`).join('')}</div>
+   <div class="rgrid">
+    <div class="rblock"><h4>Como ganha dinheiro</h4><div class="streams">${r.streams.map(st=>`<div class="stream"><span>${st[0]} ${tag(st[3])}</span><b>${st[1]}</b><span class="d">${st[2]}</span></div>`).join('')}</div></div>
+    <div class="rblock"><h4>Como vende</h4><p>${r.sales}</p><h4 style="margin-top:8px">Depende de</h4><ul>${r.deps.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+   </div>
+   <div class="rblock"><h4>Minha leitura</h4><div class="verdict">${r.read.map(t=>`<span>${t}</span>`).join('')}</div></div>
+   <div class="rblock"><h4>O que provar antes de colocar dinheiro</h4><ul>${r.prove.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+  </article>`;}).join('');
+ document.getElementById('rac-overlap').innerHTML=[
+  ['Franquia × eventos próprios.','O franqueado da One vai disputar o mesmo evento que a DrinkBox atende direto. Defina território: na região do franqueado, a DrinkBox não opera evento próprio, ou repassa o lead com comissão.'],
+  ['Franquia × venda com assinatura.',`As duas vendem a mesma One por ${brl(p.salePrice,false)}. Se a venda com assinatura permitir uso comercial, ninguém compra franquia. Regra simples: venda com assinatura é uso próprio, não pode alugar; uso comercial só via franquia.`],
+  ['Exclusividade × mercado.','Cada modelo usa "só fornecedor homologado". Isso fecha a porta pra todo cliente que já tem contrato com Ambev ou Pernod, e só faz sentido se a Diageo pagar por isso. Com 4 modelos pedindo exclusividade, negocie um contrato só com a Diageo cobrindo todos.'],
+  ['Fábrica e capital.','Os quatro modelos usam a mesma linha de produção, e três deles usam a One. Com capacidade limitada, a ordem importa: eventos primeiro (mais caixa por máquina), pré-venda financiada por sinal, Bar quando a Diageo bancar capex, franquia depois de 12 meses de dado.'],
+ ].map(c=>`<div class="callout"><b>${c[0]}</b><span>${c[1]}</span></div>`).join('');
+}
+
+// ===== abas =====
+function showTab(name){if(!['simulador','racional'].includes(name))name='simulador';
+ document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
+ document.getElementById('view-simulador').hidden=name!=='simulador';document.getElementById('view-racional').hidden=name!=='racional';
+ if(name==='simulador')render();}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{if(location.hash!=='#'+b.dataset.tab)location.hash=b.dataset.tab;else showTab(b.dataset.tab);}));
+addEventListener('hashchange',()=>showTab(location.hash.slice(1)));
+
+// cartões por modelo: estrutura criada uma vez (inputs dentro), números atualizados a cada render
+function buildUnits(){
+ document.getElementById('units').innerHTML=PLANS.map(x=>`<article class="unit" id="u-${x.k}" style="--c:var(${x.c})">
+  <div class="hd"><h3>${x.full}</h3><span class="pill" id="u-${x.k}-pill"></span></div>
+  <div class="body"><dl id="u-${x.k}-dl"></dl><span class="note" id="u-${x.k}-note"></span></div>
+  <details><summary>Premissas do modelo</summary><div class="grid">${fieldsFor(x.k)}</div></details></article>`).join('');
+}
+function renderUnits(ue,sc){
+ const {bar,ev,sale,fr}=ue,dl=r=>r.map(([a,b,c])=>`<dt>${a}</dt><dd${c?` class="${c}"`:''}>${b}</dd>`).join('');
+ const C={
+  bar:{d:[['Investimento por máquina',brl(bar.inv,false)],['Receita/mês',brl(bar.rev,false)],['Resultado/mês',brl(bar.mo,false),bar.mo>0?'pos':'neg'],['Margem de contribuição',nf.format(bar.mo/bar.rev*100)+'%'],['Payback',mths(bar.pb)],['Valor do contrato (vida média)',brl(bar.ltv)]],
+   n:`Deck: 17 meses de payback com US$ 800/mês. Aqui: ${mths(bar.pb)} com ${brl(bar.rev,false)}/mês${p.barBrandCapex>0?`, já com ${nf.format(p.barBrandCapex)}% do capex pago pela marca`:''}. Bar fica em média ${nf.format(100/Math.max(.1,p.barChurn))} meses.`},
+  ev:{d:[['Investimento por máquina',brl(ev.inv,false)],['Receita/diária',brl(ev.revD,false)],['Margem por diária',brl(ev.marD,false),ev.marD>0?'pos':'neg'],['Resultado/mês',brl(ev.mo,false),ev.mo>0?'pos':'neg'],['Payback',mths(ev.pb)],['Payback com metade das diárias',mths(ev.pbHalf)]],
+   n:isFinite(ev.beDays)?`Abaixo de ${nf.format(ev.beDays)} diária(s)/mês a máquina não paga a própria manutenção. O risco aqui é utilização, não margem.`:'A diária não cobre o custo de operação: revise preço ou custo por diária.'},
+  sale:{d:[['Preço',brl(p.salePrice,false)],['Margem na venda (após CAC)',brl(sale.mar,false),sale.mar>0?'pos':'neg'],['Margem %',nf.format(sale.mar/p.salePrice*100)+'%'],['Capital de giro por unidade',sale.wc>0?brl(sale.wc,false):'pago pelo cliente',sale.wc>0?'':'pos'],['Plano recorrente líquido/mês',brl(sale.plan,false)],['Mídia líquida/mês',brl(sale.media,false)],['Prazo de entrega',p.saleLead+' meses']],
+   n:sale.wc>0?`Com sinal de ${nf.format(p.saleDeposit)}% a empresa adianta ${brl(sale.wc,false)} por máquina. Sinal de ${nf.format(sale.depBE)}% cobre a produção inteira.`:`O sinal de ${nf.format(p.saleDeposit)}% já cobre o custo de produção: o cliente financia o estoque.`},
+  fr:{d:[['Margem na entrada (taxa + máquina − CAC)',brl(fr.up,false),fr.up>0?'pos':'neg'],['Royalty + plano bruto/mês',brl(fr.roy+p.frPlan,false)],['Mídia líquida da DrinkBox/mês',brl(fr.media,false)],['Recorrente líquido − suporte/mês',brl(fr.mo,false),fr.mo>0?'pos':'neg'],['Investimento do franqueado',brl(fr.zInv,false)],['Lucro do franqueado/mês',brl(fr.zMo,false),fr.zMo>0?'pos':'neg'],['Payback do franqueado',mths(fr.zPb),fr.zPb>30?'neg':fr.zPb>18?'warn':'pos']],
+   n:(fr.mo<=0?`Royalty + plano não cobrem o suporte; a franquia só ganha na entrada. `:'')+(fr.zPb>30?'Payback do franqueado acima de 30 meses: difícil vender a franquia.':fr.zPb>18?'Payback do franqueado entre 18 e 30 meses: vendável, mas com esforço comercial.':'Payback do franqueado abaixo de 18 meses: fácil de vender.')},
+ };
+ PLANS.forEach(x=>{const el=document.getElementById('u-'+x.k);el.classList.toggle('off',!ON[x.k]);
+  document.getElementById(`u-${x.k}-dl`).innerHTML=dl(C[x.k].d);
+  document.getElementById(`u-${x.k}-note`).textContent=C[x.k].n;
+  const s=sc[x.k];document.getElementById(`u-${x.k}-pill`).textContent=ON[x.k]?`vel ${s.vel} · esc ${s.esc}`:'desligado';});
+}
+function renderScore(sc){
+ const act=PLANS.filter(x=>ON[x.k]);
+ document.getElementById('score-bars').innerHTML=act.map(x=>{const s=sc[x.k],bv=band(s.vel),be=band(s.esc);
+  const meter=(l,v,b)=>`<div class="meter"><span>${l}</span><span class="track"><span class="fill" style="width:${v}%;background:var(${x.c})"></span></span><b>${v}</b></div>`;
+  return `<div class="srow"><div class="t"><span class="dot" style="background:var(${x.c})"></span>${x.n}<span class="pill"><span class="${bv[1]}">vel. ${bv[0]}</span> · <span class="${be[1]}">esc. ${be[0]}</span></span></div>${meter('Velocidade',s.vel)}${meter('Escala',s.esc)}</div>`;}).join('')||'<span class="small">Ligue ao menos um modelo.</span>';
+ const fmtRaw=(k,r,s)=>({first:r.first==null?'sem receita':'mês '+r.first,pb:mths(r.pb),cap:brl(r.cap),ready:'nota '+r.ready,mkt:int(r.mkt)+' un.',rev:nf.format(s.rev*100)+'%',eff:s.eff>=1?'≥ 3×':nf.format(s.eff*3)+'×',ops:'nota '+r.ops}[k]);
+ let h=`<thead><tr><th>Critério</th><th>Peso</th>${act.map(x=>`<th><span class="sw" style="background:var(${x.c})"></span>${x.n}</th>`).join('')}<th style="text-align:left">Régua</th></tr></thead><tbody>`;
+ [['Velocidade','vel'],['Escala','esc']].forEach(([lab,key])=>{
+  CRIT[key].forEach(c=>{h+=`<tr><td>${c.l}</td><td>${Math.round(c.w*100)}%</td>${act.map(x=>{const s=sc[x.k];return `<td>${Math.round(s.s[c.k]*100)} <span class="small">(${fmtRaw(c.k,s.raw,s.s)})</span></td>`;}).join('')}<td style="text-align:left;white-space:normal;min-width:160px" class="small">${c.rule}</td></tr>`;});
+  h+=`<tr><td><b>Score de ${lab.toLowerCase()}</b></td><td></td>${act.map(x=>{const v=sc[x.k][key],b=band(v);return `<td><b class="${b[1]}">${v}</b></td>`;}).join('')}<td></td></tr>`;});
+ document.getElementById('t-score').innerHTML=h+'</tbody>';
+ drawScatter('ch-score',act.map(x=>({n:x.n,c:css(x.c),x:sc[x.k].vel,y:sc[x.k].esc})));
+}
+
+// ===== gráficos =====
+function dims(id,ratio=.48){const el=document.getElementById(id);const W=Math.max(280,el.clientWidth||600);return {el,W,H:Math.round(Math.min(320,Math.max(200,W*ratio)))};}
+function niceMax(v){if(v<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(v)));const f=v/e;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e;}
+function axisX(W,H,pl,pr,pb){let s='';for(let y=1;y<=5;y++){const x=pl+(W-pl-pr)*(y*12-6)/60;s+=`<text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11" fill="var(--muted)">ano ${y}</text>`;}return s;}
+function drawStack(id,series,o={}){const {el,W,H}=dims(id);const fmt=o.fmt||brl;const pl=o.fmt?36:58,pr=8,pt=8,pb=24,iw=W-pl-pr,ih=H-pt-pb;
+ const tot=Array.from({length:60},(_,i)=>series.reduce((a,s)=>a+Math.max(0,s.v[i]),0));const mx=niceMax(Math.max(...tot,o.cap||0));const bw=iw/60;let g='';
+ for(let k=0;k<=4;k++){const v=mx*k/4,y=pt+ih-ih*k/4;g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--muted)">${k?fmt(v):'0'}</text>`;}
+ for(let i=0;i<60;i++){let acc=0;series.forEach(s=>{const v=Math.max(0,s.v[i]);if(!v)return;const h=ih*v/mx;const y=pt+ih-ih*acc/mx-h;acc+=v;g+=`<rect x="${pl+i*bw+bw*.12}" y="${y}" width="${bw*.76}" height="${h}" fill="${s.c}"/>`;});}
+ if(o.cap>0){const y=pt+ih-ih*o.cap/mx;g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/>`;}
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label||'Receita mensal empilhada por modelo'}">${g}${axisX(W,H,pl,pr,pb)}</svg>`;}
+function drawLine(id,v){const {el,W,H}=dims(id);const pl=58,pr=8,pt=10,pb=24,iw=W-pl-pr,ih=H-pt-pb;
+ let mn=Math.min(0,...v);const hi=Math.max(0,...v);const step=niceMax((hi-mn)||1)/4;mn=Math.floor(mn/step)*step;let mx=mn+Math.ceil((hi-mn)/step)*step;if(mx<=mn)mx=mn+step;
+ const Y=x=>pt+ih-(x-mn)/(mx-mn)*ih,X=i=>pl+iw*(i+.5)/60;let g='';
+ for(let t=mn;t<=mx+step*1e-6;t+=step){g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${pl-6}" y="${Y(t)+4}" text-anchor="end" font-size="11" fill="var(--muted)">${Math.abs(t)<1?'0':brl(t)}</text>`;}
+ g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.2"/>`;
+ const pts=v.map((x,i)=>`${X(i)},${Y(x)}`).join(' ');
+ g+=`<polygon points="${X(0)},${Y(0)} ${pts} ${X(59)},${Y(0)}" fill="var(--accent)" fill-opacity=".12"/><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>`;
+ const mi=v.indexOf(Math.min(...v));g+=`<circle cx="${X(mi)}" cy="${Y(v[mi])}" r="4" fill="var(--accent)"/><circle cx="${X(59)}" cy="${Y(v[59])}" r="4" fill="var(--ink)"/>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Caixa acumulado ao longo de 60 meses">${g}${axisX(W,H,pl,pr,pb)}</svg>`;}
+function drawScatter(id,pts){const el=document.getElementById(id);const W=Math.max(280,el.clientWidth||400),H=Math.round(Math.min(380,W*.9));
+ const pl=34,pr=12,pt=12,pb=34,iw=W-pl-pr,ih=H-pt-pb,X=v=>pl+iw*v/100,Y=v=>pt+ih-ih*v/100;let g='';
+ g+=`<rect x="${X(50)}" y="${Y(100)}" width="${iw/2}" height="${ih/2}" fill="var(--pos)" fill-opacity=".08"/>`;
+ for(let t=0;t<=100;t+=25){g+=`<line x1="${X(t)}" x2="${X(t)}" y1="${pt}" y2="${pt+ih}" stroke="var(--line)"/><line x1="${pl}" x2="${pl+iw}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${X(t)}" y="${pt+ih+14}" text-anchor="middle" font-size="10" fill="var(--muted)">${t}</text><text x="${pl-5}" y="${Y(t)+3}" text-anchor="end" font-size="10" fill="var(--muted)">${t}</text>`;}
+ g+=`<line x1="${X(50)}" x2="${X(50)}" y1="${pt}" y2="${pt+ih}" stroke="var(--muted)" stroke-dasharray="3 3"/><line x1="${pl}" x2="${pl+iw}" y1="${Y(50)}" y2="${Y(50)}" stroke="var(--muted)" stroke-dasharray="3 3"/>`;
+ g+=`<text x="${X(98)}" y="${Y(97)}" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--pos)">rápido e escala</text><text x="${X(2)}" y="${Y(3)}" font-size="10.5" fill="var(--muted)">lento e limitado</text>`;
+ g+=`<text x="${pl+iw/2}" y="${H-4}" text-anchor="middle" font-size="11" fill="var(--muted)">velocidade →</text><text x="11" y="${pt+ih/2}" text-anchor="middle" font-size="11" fill="var(--muted)" transform="rotate(-90 11 ${pt+ih/2})">escala →</text>`;
+ const placed=[];
+ pts.forEach(d=>{const cx=X(d.x),cy=Y(d.y);let ly=cy-10;placed.forEach(q=>{if(Math.abs(q.x-cx)<90&&Math.abs(q.y-ly)<13)ly=q.y+14;});placed.push({x:cx,y:ly});
+  const anchor=cx>W-100?'end':'start',lx=anchor==='end'?cx-8:cx+8;
+  g+=`<circle cx="${cx}" cy="${cy}" r="7" fill="${d.c}" stroke="var(--surface)" stroke-width="2"/><text x="${lx}" y="${ly}" text-anchor="${anchor}" font-size="11.5" font-weight="700" fill="var(--ink)">${d.n}</text>`;});
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de velocidade versus escala por modelo">${g}</svg>`;}
+
+// ===== inputs =====
+function fieldsFor(g){return P.filter(d=>d.g===g).map(d=>{const tag=d.src==='est'?'<span class="tag est">est.</span>':d.src==='you'?'<span class="tag you">seu</span>':'<span class="tag">deck</span>';
+ return `<div class="field"><label for="in-${d.k}">${d.l} ${tag}</label><input id="in-${d.k}" type="text" inputmode="decimal" autocomplete="off" data-k="${d.k}"></div>`;}).join('');}
+function parseNum(s){s=String(s).trim().replace(/\s/g,'');if(/,\d{1,2}$/.test(s)||(/,/.test(s)&&!/\./.test(s)))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(/,/g,'');return s===''?NaN:Number(s);}
+function syncInputs(){P.forEach(d=>{const el=document.getElementById('in-'+d.k);if(el){el.value=String(p[d.k]).replace('.',',');el.classList.remove('bad');}});
+ PLANS.forEach(x=>{const c=document.getElementById('on-'+x.k);if(c)c.checked=!!ON[x.k];});}
+document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;const v=parseNum(e.target.value);
+ if(!isFinite(v)){e.target.classList.add('bad');return;}e.target.classList.remove('bad');p[k]=v;markDirty();render();});
+function buildToggles(){const t=document.getElementById('toggles');
+ t.innerHTML='<span class="lbl">Modelos</span>'+PLANS.map(x=>`<label class="tog"><input type="checkbox" id="on-${x.k}" checked data-on="${x.k}"><span class="dot" style="background:var(${x.c})"></span>${x.n}</label>`).join('');
+ t.addEventListener('change',e=>{const k=e.target.dataset.on;if(k){ON[k]=e.target.checked;markDirty();render();}});}
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{setPresetBtn(b.dataset.preset);applyPreset(b.dataset.preset);ON={bar:true,ev:true,sale:true,fr:true};current=null;syncInputs();renderSaves();render();}));
+function setPresetBtn(name){document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===name)));}
+
+// ===== cenários salvos =====
+let saves=[],current=null,store=null,dirty=false;const LS='drinkbox-scenarios',DRAFT='drinkbox-draft-v2';
+const lsGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+function slug(s){return (s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'cenario').slice(0,50);}
+function markDirty(){dirty=true;setPresetBtn(null);if(current){current=null;renderSaves();}}
+function saveDraft(){lsSet(DRAFT,{p,ON});}
+function setStatus(t){document.getElementById('sv-status').textContent=t;}
+function renderSaves(){const box=document.getElementById('sv-list');
+ box.innerHTML=saves.map(s=>`<span class="sv"><button type="button" class="load" data-load="${esc(s.id)}" aria-pressed="${current===s.id}">${esc(s.name)}</button><button type="button" class="del" data-del="${esc(s.id)}" aria-label="Apagar ${esc(s.name)}">×</button></span>`).join('');}
+document.getElementById('sv-list').addEventListener('click',async e=>{
+ const L=e.target.closest('[data-load]'),D=e.target.closest('[data-del]');
+ if(L){const s=saves.find(x=>x.id===L.dataset.load);if(!s)return;p=Object.assign({},DEF,s.params||{});ON=Object.assign({bar:true,ev:true,sale:true,fr:true},s.on||{});
+  current=s.id;setPresetBtn(null);document.getElementById('sv-name').value=s.name;syncInputs();renderSaves();render();setStatus(`Cenário "${s.name}" carregado.`);}
+ if(D){if(!D.classList.contains('arm')){D.classList.add('arm');D.textContent='apagar?';setTimeout(()=>{if(D.isConnected){D.classList.remove('arm');D.textContent='×';}},3000);return;}
+  const id=D.dataset.del;try{if(store)await store.collection('scenarios').doc(id).delete();else{saves=saves.filter(x=>x.id!==id);lsSet(LS,saves);renderSaves();}
+   if(current===id)current=null;setStatus('Cenário apagado.');}catch(err){setStatus('Não consegui apagar: '+(err&&err.message||'erro')+'.');}}
+});
+document.getElementById('sv-save').addEventListener('click',async()=>{
+ const inp=document.getElementById('sv-name'),name=inp.value.trim();if(!name){inp.focus();setStatus('Dê um nome ao cenário antes de salvar.');return;}
+ const id=slug(name),doc={name,params:Object.assign({},p),on:Object.assign({},ON),savedAt:new Date().toISOString()};
+ const btn=document.getElementById('sv-save');btn.disabled=true;
+ try{if(store){await store.collection('scenarios').doc(id).set(doc);}
+  else{saves=saves.filter(x=>x.id!==id).concat([{id,...doc}]).sort((a,b)=>a.savedAt<b.savedAt?1:-1);lsSet(LS,saves);}
+  current=id;dirty=false;renderSaves();setStatus(`Salvo: "${name}"${store?'':' (só neste navegador)'}.`);}
+ catch(err){setStatus('Não consegui salvar: '+(err&&err.message||'erro')+'. Tente de novo.');}
+ btn.disabled=false;});
+async function initStore(){
+ let db=null;try{db=window.claude&&window.claude.use?await window.claude.use('db'):null;}catch(e){db=null;}
+ if(!db){saves=(lsGet(LS)||[]);renderSaves();setStatus(saves.length?'Cenários salvos neste navegador.':'Nenhum cenário salvo ainda. Ajuste as premissas, dê um nome e salve.');return;}
+ store=db;let got=false;const timer=setTimeout(()=>{if(!got)setStatus('Os cenários salvos estão demorando pra carregar.');},10000);
+ db.collection('scenarios').onSnapshot(snap=>{got=true;clearTimeout(timer);
+  saves=snap.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>String(a.savedAt)<String(b.savedAt)?1:-1);renderSaves();
+  if(!document.getElementById('sv-status').textContent.startsWith('Salvo')&&!document.getElementById('sv-status').textContent.startsWith('Cenário'))
+   setStatus(saves.length?`${saves.length} cenário(s) salvo(s). Toque pra carregar.`:'Nenhum cenário salvo ainda. Ajuste as premissas, dê um nome e salve.');},
+  err=>{got=true;clearTimeout(timer);setStatus('Não consegui ler os cenários salvos ('+(err&&err.code||'erro')+').');});
+}
+
+// ===== boot =====
+applyPreset('base');
+const dr=lsGet(DRAFT);if(dr&&dr.p){p=Object.assign({},DEF,dr.p);ON=Object.assign(ON,dr.on||{});setPresetBtn(null);}
+buildToggles();buildUnits();
+document.getElementById('qual-inputs').innerHTML=fieldsFor('qual');
+document.getElementById('inputs-geral').innerHTML=fieldsFor('geral');
+document.getElementById('inputs-val').innerHTML=fieldsFor('val');
+syncInputs();render();renderSaves();initStore();showTab(location.hash.slice(1));
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(render,150);});
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);}catch(e){}
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+</script>
+
+</body>
+</html>
